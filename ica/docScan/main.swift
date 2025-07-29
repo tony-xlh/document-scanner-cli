@@ -123,30 +123,79 @@ class ScannerManager: NSObject, ICDeviceBrowserDelegate, ICScannerDeviceDelegate
 
 func main() {
     let scannerManager = ScannerManager()
-    print("Finding scanners...")
-    
     // Parse command line arguments
     var outputPath: String?
+    var listScannersFlag = false
+    var selectedScannerName: String?
     let arguments = CommandLine.arguments
     for i in 0..<arguments.count {
-        if (arguments[i] == "-o" || arguments[i] == "--output") && i+1 < arguments.count {
-            outputPath = arguments[i+1]
+        switch arguments[i] {
+        case "-o", "--output":
+            if i+1 < arguments.count {
+                outputPath = arguments[i+1]
+            }
+        case "-L":
+            listScannersFlag = true
+        case "-d":
+            if i+1 < arguments.count {
+                selectedScannerName = arguments[i+1]
+            } else {
+                print("Error: -d requires a scanner name argument")
+                exit(1)
+            }
+        default:
+            break
         }
     }
     
-    if outputPath == nil {
-        print("Usage: docScan --output <path>")
-        print("Example: docScan --output scan.jpg")
+    // Handle -L flag to list scanners
+    if listScannersFlag {
+        scannerManager.listScanners { scanners in
+            if scanners.isEmpty {
+                print("No scanners available.")
+            } else {
+                print("Available scanners:")
+                for (index, scanner) in scanners.enumerated() {
+                    print("\(index): \(scanner.name ?? "Unknown Scanner")")
+                }
+            }
+            exit(0)
+        }
+        RunLoop.current.run()
         return
+    }
+    
+    // Check required parameters
+    if outputPath == nil {
+        print("Usage: docScan [options]")
+        print("Options:")
+        print("  -L          List all available scanners")
+        print("  -d <name>   Specify scanner by name")
+        print("  -o <path>   Output file path")
+        exit(1)
     }
     
     scannerManager.listScanners { scanners in
         if scanners.isEmpty {
             print("No scanners found.")
-            return
+            exit(1)
         }
         
-        let selectedScanner = scanners[1]
+        // Find the scanner with matching name
+        guard var selectedScanner = scanners.first else {
+            print("No scanners not found.")
+            exit(1)
+        }
+        
+        if selectedScannerName != "" {
+            for scanner in scanners {
+                if scanner.name == selectedScannerName {
+                    selectedScanner = scanner
+                    break
+                }
+            }
+        }
+        
         print("Selected scanner: \(selectedScanner.name ?? "Unknown")")
         
         scannerManager.startScan(scanner: selectedScanner, outputPath: outputPath!) { result in
