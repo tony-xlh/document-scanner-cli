@@ -42,7 +42,14 @@ docScan -d "scanner name" -o out.jpg #scan with a scanner
 You can also install SANE to scan documents on macOS.
 
 
+## Cross-Platform
 
+Use eSCL.
+
+```bash
+python escl_scan.py -L #list scanners
+python escl_scan.py -d "scanner url" -o put.png #scan with a scanner
+```
 
 
 
