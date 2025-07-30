@@ -48,8 +48,14 @@ Use eSCL.
 
 ```bash
 python escl_scan.py -L #list scanners
-python escl_scan.py -d "scanner url" -o put.png #scan with a scanner
+python escl_scan.py -d "scanner url" -o out.png #scan with a scanner
 ```
 
+Use [Dynamic Web TWAIN](https://www.dynamsoft.com/web-twain/overview/)'s [RESTful API](https://www.dynamsoft.com/web-twain/restfulapi/). It supports scanning with TWAIN, WIA, ICA, SANE and eSCL with one unified API.
+
+```bash
+python webtwain_scan.py -L #list scanners
+python webtwain_scan.py -d "scanner name" -o out.jpg #scan with a scanner
+```
 
 
