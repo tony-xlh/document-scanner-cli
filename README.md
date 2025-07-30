@@ -39,7 +39,7 @@ docScan -d "scanner name" -o out.jpg #scan with a scanner
 ```
 
 
-You can also install SANE to scan documents on macOS.
+SANE and TWAIN are also supported on macOS.
 
 
 ## Cross-Platform
